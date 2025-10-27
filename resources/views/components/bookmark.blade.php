@@ -1,4 +1,4 @@
-@props(['bookmark', 'selectedCategoryIds' => ''])
+@props(['bookmark'])
 
 @php
     $bookmarkTitleWithQuotes = "\"{$bookmark->title}\"";
@@ -25,18 +25,7 @@
         </div>
     </div>
     @foreach ($bookmark->categories as $category)
-        @php
-            $newCategoryIds = "";
-            if($selectedCategoryIds) {
-                $newCategoryIds = $selectedCategoryIds;
-                $newCategoryIds[] = $category->id;
-                $newCategoryIds = array_unique($newCategoryIds);
-                $newCategoryIds = implode('_', $newCategoryIds);
-            } else {
-                $newCategoryIds = $category->id;
-            }
-        @endphp
-        <a href="{{ route('bookmarks.index', ['category_ids' => $newCategoryIds]) }}">
+        <a href="{{ route('bookmarks.index', ['category_id' => $category->id]) }}">
             <span class="mr-2 px-2 py-1 bg-gray-600 rounded text-sm">{{ $category->name }}</span>
         </a>
     @endforeach

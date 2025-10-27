@@ -15,17 +15,19 @@ class BookmarkController extends Controller
     public function index()
     {
         // Get the query string parameter 'category_ids' if present
-        $categoryIds = request()->query('category_ids');
+        // $categoryIds = request()->query('category_ids');
 
-        if ($categoryIds) {
-            $categoryIds = explode('_', $categoryIds);
-        }
+        // if ($categoryIds) {
+        //     $categoryIds = explode('_', $categoryIds);
+        // }
+
+        $categoryId = request()->query('category_id');
 
         // Retrieve bookmarks (websites) with their associated categories for the authenticated user.
-        // If a category_ids is provided, filter bookmarks by that category.
-        if ($categoryIds) {
-            $bookmarks = Website::where('user_id', Auth::id())->with('categories')->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('category_id', $categoryIds);
+        // If a category_id is provided, filter bookmarks by that category.
+        if ($categoryId) {
+            $bookmarks = Website::where('user_id', Auth::id())->with('categories')->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
             })->get();
         } else {
             $bookmarks = Website::where('user_id', Auth::id())->with('categories')->get();
@@ -36,7 +38,7 @@ class BookmarkController extends Controller
         return view('bookmarks.index', [
             'bookmarks' => $bookmarks,
             'categories' => $categories,
-            'categoryIds' => $categoryIds
+            'categoryId' => $categoryId ?? null,
         ]);
     }
 

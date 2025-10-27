@@ -4,18 +4,19 @@
         <hr class="my-4">
         <h2 class="text-3xl mb-4">{{ __('Your Bookmarks') }}</h2>
         <hr class="my-4">
-        <h3 class="text-center">{{ __('Filter by category') }}:</h3>
-        <form method="POST" action="{{ route('bookmarks.filter') }}" class="mb-4">
-            @csrf
-            <div class="flex justify-around my-2 flex-wrap">
-                <x-category-checkboxes :categories="$categories" :categoryIds="$categoryIds" />
-            </div>
-            <div class="text-center">
-                <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded">{{ __('Filter') }}</button>
+        {{-- <h3 class="text-center">{{ __('Filter by category') }}:</h3> --}}
+        <div class="flex justify-center flex-wrap my-4">
+            <div class="inline-block mx-2 my-1">
                 <a href="{{ route('bookmarks.index') }}"
-                class="ml-2 px-4 py-2 bg-gray-600 text-white rounded">{{ __('Clear Filters') }}</a>
+                    class="px-4 py-2 @if(!$categoryId) bg-gray-700 @endif text-white rounded inline-block">{{ __('All') }}</a>
             </div>
-        </form>
+            @foreach ($categories as $category)
+                <div class="inline-block mx-2 my-1">
+                    <a href="{{ route('bookmarks.index', ['category_id' => $category->id]) }}"
+                        class="px-4 py-2 @if(intval($categoryId) === $category->id) bg-gray-700 @endif text-white rounded inline-block">{{ $category->name }}</a>
+                </div>
+            @endforeach
+        </div>
         <hr class="my-4">
         @if ($bookmarks->isEmpty())
             <p>{{ __("You don't have any bookmarks yet.") }}</p>
@@ -25,7 +26,8 @@
             </p>
         @endif
         @foreach ($bookmarks as $bookmark)
-            <x-bookmark :bookmark="$bookmark" :selectedCategoryIds="$categoryIds" />
+            {{-- <x-bookmark :bookmark="$bookmark" :selectedCategoryIds="$categoryIds" /> --}}
+            <x-bookmark :bookmark="$bookmark" />
         @endforeach
     @endauth
 </x-layout>
