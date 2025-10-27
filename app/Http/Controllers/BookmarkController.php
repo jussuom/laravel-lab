@@ -16,12 +16,13 @@ class BookmarkController extends Controller
     {
         // Get the query string parameter 'category_ids' if present
         $categoryIds = request()->query('category_ids');
+
         if ($categoryIds) {
             $categoryIds = explode('_', $categoryIds);
         }
 
         // Retrieve bookmarks (websites) with their associated categories for the authenticated user.
-        // If a category_id is provided, filter bookmarks by that category.
+        // If a category_ids is provided, filter bookmarks by that category.
         if ($categoryIds) {
             $bookmarks = Website::where('user_id', Auth::id())->with('categories')->whereHas('categories', function ($query) use ($categoryIds) {
                 $query->whereIn('category_id', $categoryIds);
@@ -32,7 +33,11 @@ class BookmarkController extends Controller
 
         $categories = Category::where('user_id', Auth::id())->get();
 
-        return view('bookmarks.index', ['bookmarks' => $bookmarks, 'categories' => $categories]);
+        return view('bookmarks.index', [
+            'bookmarks' => $bookmarks,
+            'categories' => $categories,
+            'categoryIds' => $categoryIds
+        ]);
     }
 
     /**
@@ -67,7 +72,7 @@ class BookmarkController extends Controller
             $website->categories()->attach($category_id);
         }
 
-        return redirect()->route('bookmarks.index')->with('success', 'Kirjanmerkki lisätty onnistuneesti!');
+        return redirect()->route('bookmarks.index')->with('success', __('Bookmark added successfully!'));
     }
 
     /**
@@ -91,9 +96,11 @@ class BookmarkController extends Controller
             return redirect()->route('bookmarks.index');
         }
 
+        $categories = Category::where('user_id', Auth::id())->get();
+
         return view(
             'bookmarks.edit',
-            ['bookmark' => $bookmark]
+            ['bookmark' => $bookmark, 'categories' => $categories]
         );
     }
 
@@ -106,8 +113,8 @@ class BookmarkController extends Controller
         $validated = $request->validate(
             ['title' => 'required', 'url' => 'required'],
             [
-                'title.required' => 'Otsikko -kenttä on pakollinen!',
-                'url.required' => 'Web-osoite -kenttä on pakollinen!'
+                'title.required' => __('Title is required'),
+                'url.required' => __('Website URL is required')
             ]
         );
 
@@ -118,9 +125,15 @@ class BookmarkController extends Controller
             return redirect()->route('bookmarks.index');
         }
 
+        $category_id = $request->input('category_id'); // Get category ID from the request
+
         $bookmark->update($validated);
 
-        return redirect()->route('bookmarks.index')->with('success', 'Kirjanmerkin muokkaus onnistui!');
+        if ($category_id) {
+            $bookmark->categories()->attach($category_id);
+        }
+
+        return redirect()->route('bookmarks.index')->with('success', __('Bookmark updated successfully!'));
     }
 
     /**
@@ -137,13 +150,13 @@ class BookmarkController extends Controller
 
         $bookmark->delete();
 
-        return redirect()->route('bookmarks.index')->with('success', 'Kirjanmerkin poisto onnistui!');
+        return redirect()->route('bookmarks.index')->with('success', __('Bookmark deleted successfully!'));
     }
 
     public function filterByCategory(Request $request)
     {
         $categoryIds = $request->input('category_id');
-        if($categoryIds) {
+        if ($categoryIds) {
             // Ensure $categoryIds is an array
             if (!is_array($categoryIds)) {
                 $categoryIds = [$categoryIds];

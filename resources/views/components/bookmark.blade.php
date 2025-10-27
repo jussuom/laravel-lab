@@ -25,7 +25,7 @@
         </div>
     </div>
     @foreach ($bookmark->categories as $category)
-        {{-- @php
+        @php
             $newCategoryIds = "";
             if($selectedCategoryIds) {
                 $newCategoryIds = $selectedCategoryIds;
@@ -35,7 +35,9 @@
             } else {
                 $newCategoryIds = $category->id;
             }
-        @endphp --}}
-        <span class="mr-2 px-2 py-1 bg-gray-600 rounded text-sm">{{ $category->name }}</span>
+        @endphp
+        <a href="{{ route('bookmarks.index', ['category_ids' => $newCategoryIds]) }}">
+            <span class="mr-2 px-2 py-1 bg-gray-600 rounded text-sm">{{ $category->name }}</span>
+        </a>
     @endforeach
 </div>

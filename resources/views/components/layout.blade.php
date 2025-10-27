@@ -14,7 +14,7 @@
         <div class="ms-4 text-3xl"><a href="/"><u>{{ __('Laravel Lab') }}</u>:</a> {{ __('Bookmarks Application') }}</div>
         <x-menu />
     </div>
-    <div class="w-1/2 mx-auto my-4">
+    <div class="w-3/4 mx-auto my-4">
         {{ $slot }}
     </div>
 </body>
