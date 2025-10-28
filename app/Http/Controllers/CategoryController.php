@@ -61,6 +61,12 @@ class CategoryController extends Controller
     {
         // Edit action to retrieve the category by ID
         $category = Category::findOrFail($id);
+
+        // Ensure the category belongs to the authenticated user
+        if ($category->user_id !== Auth::id()) {
+            return redirect()->route('categories.index');
+        }
+
         return view(
             'categories.edit',
             ['category' => $category]

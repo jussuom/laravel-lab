@@ -25,7 +25,7 @@
 
             <div class="mt-2">
                 {{ __('Categories') }}:
-                <x-category-checkboxes :categories="$categories" />
+                <x-category-checkboxes :categories="$categories" :categoryIds="$bookmark->categories->pluck('id')->toArray()" />
             </div>
 
             <button type="submit">{{ __('Update bookmark') }}</button>
